@@ -159,6 +159,29 @@ create unique index if not exists prediction_ledger_recommendation_unique_idx on
 create index if not exists prediction_ledger_ticker_idx on prediction_ledger (ticker);
 create index if not exists prediction_ledger_timestamp_idx on prediction_ledger (prediction_timestamp desc);
 
+create or replace function prevent_final_prediction_ledger_mutation()
+returns trigger as $$
+begin
+  if old.is_final then
+    raise exception 'final prediction_ledger rows are immutable; append a correction instead';
+  end if;
+
+  return old;
+end;
+$$ language plpgsql;
+
+drop trigger if exists prediction_ledger_prevent_final_update on prediction_ledger;
+create trigger prediction_ledger_prevent_final_update
+before update on prediction_ledger
+for each row
+execute function prevent_final_prediction_ledger_mutation();
+
+drop trigger if exists prediction_ledger_prevent_final_delete on prediction_ledger;
+create trigger prediction_ledger_prevent_final_delete
+before delete on prediction_ledger
+for each row
+execute function prevent_final_prediction_ledger_mutation();
+
 create table if not exists decision_journal (
   id uuid primary key default gen_random_uuid(),
   ledger_id uuid not null references prediction_ledger (id) on delete cascade,
