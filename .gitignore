@@ -1,0 +1,28 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+
+# Build outputs
+dist/
+build/
+.next/
+coverage/
+
+# Logs
+*.log
+logs/
+
+# Local reports / generated artifacts
+reports/generated/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
