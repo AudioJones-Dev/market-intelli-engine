@@ -1,4 +1,6 @@
 export type { DeliveryProvider, DeliveryResult, ReportPayload } from './delivery.js';
+export { KalshiProvider } from './kalshi.js';
+export type { KalshiProviderConfig } from './kalshi.js';
 export type { MarketContract, MarketListResult, MarketProvider, MarketQueryParams } from './market.js';
 export type { JsonSchema, ModelProvider, ModelRequest, ModelResponseFormat, ModelResult } from './model.js';
 export type { ResearchProvider, ResearchRequest, ResearchResult, ResearchSource } from './research.js';
