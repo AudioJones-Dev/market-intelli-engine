@@ -1,10 +1,20 @@
 import type { ProviderHealth } from './types.js';
 
+export type JsonSchema = Record<string, unknown>;
+
+export interface ModelResponseFormat {
+  type: 'json_schema';
+  name: string;
+  schema: JsonSchema;
+  strict: boolean;
+}
+
 export interface ModelRequest<TInput = unknown> {
   promptId: string;
   promptVersion: string;
   modelName: string;
   temperature: number;
+  responseFormat: ModelResponseFormat;
   input: TInput;
 }
 
