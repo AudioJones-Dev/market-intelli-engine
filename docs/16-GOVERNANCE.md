@@ -97,6 +97,59 @@ A deployed feature is STABLE only after:
 
 Default observation window: 7 days for scheduled production workflows unless otherwise specified.
 
+## Design Governance
+
+MIE inherits the canonical Audio Jones / AJ Digital **Editorial Intelligence Systems** design
+language. MIE does not own a visual identity and may not create one.
+
+Binding documents:
+
+- `docs/design/DESIGN_SYSTEM_SNAPSHOT.md` — controlled read-only snapshot; records the canonical
+  source repository, path, and commit.
+- `docs/design/MIE_DESIGN_ADAPTATION.md` — domain semantics.
+- `docs/design/DATA_VISUALIZATION_STANDARD.md` — chart rules.
+- `docs/design/ANALYST_REPORT_STANDARD.md` — report structure. **Binding for the MVP.**
+
+### Precedence
+
+1. Canonical implementation (`audiojones.com` `src/app/globals.css`).
+2. Canonical document (`audiojones.com` `docs/design/DESIGN.md`).
+3. `DESIGN_SYSTEM_SNAPSHOT.md`.
+4. MIE adaptation documents — may assign meaning to a token, never change its value.
+
+### Prohibited without approval
+
+The following are defects, not style preferences, and block Definition of Done:
+
+- Introducing a color, font, spacing step, radius, or motion curve not in the snapshot.
+- Using a raw hex value in place of a semantic token.
+- Re-mapping a semantic alias to a different raw value.
+- Editing token values in the snapshot (it is read-only; use the resnapshot process).
+- Inventing a MIE-local component convention that diverges from the canonical component rules.
+- Mapping YES to green and NO to red, or any outcome-directional color coding.
+- Adopting an upstream design change without a resnapshot and human approval.
+
+If a required value does not exist upstream, that is an **upstream request**, not a local
+addition. Open the request; do not work around it.
+
+### Upstream changes are proposals, not instructions
+
+Canonical upstream changes are **not** automatically adopted. Each requires review against the
+resnapshot process (`DESIGN_SYSTEM_SNAPSHOT.md` §4), including a contrast re-verification, and
+human approval. MIE may deliberately lag canonical; lagging with a recorded commit SHA is a
+governed state, drifting without one is not.
+
+### Accessibility acceptance criteria
+
+Criteria A-1 through A-12 in `MIE_DESIGN_ADAPTATION.md` §12.2 are acceptance criteria, not
+guidelines. They apply to any rendered output — future UI, HTML/PDF reports, and generated chart
+images. Work that produces rendered output is not DONE until they pass.
+
+Contrast claims inherited from upstream documentation are **not accepted on trust**. Any newly
+adopted or changed color must be measured. This rule exists because a documented canonical token
+value (`--text-muted: #666666`) was found to fail WCAG AA on every MIE surface; see
+`DESIGN_SYSTEM_SNAPSHOT.md` §5.1.
+
 ## Human Approval Matrix
 
 Human approval is required for:
@@ -108,6 +161,9 @@ Human approval is required for:
 - New provider.
 - Security/secrets changes.
 - Any trading-related capability.
+- Design-system resnapshot or adoption of an upstream design change.
+- Any change to MIE semantic color mapping or report structure.
+- Any frontend work (see the frontend ADR gate in `docs/14-ADR.md`).
 
 ## Engineering Decision Hierarchy
 

@@ -82,6 +82,11 @@ As an analyst, I want a concise daily report so that I can review opportunities 
 - Report includes top opportunities, pass/watch reasons, evidence summaries, probability estimates, edge, EV, confidence, and risks.
 - Report is stored in `reports/` or the configured delivery target.
 - Report distinguishes facts, assumptions, inference, speculation, and opinion.
+- Report conforms to `docs/design/ANALYST_REPORT_STANDARD.md`, which fixes section order, table
+  column order, numeric precision, epistemic labeling, source attribution, and partial-run
+  labeling. Its §14 conformance checklist is the acceptance test for this story.
+- YES and NO outcomes receive equivalent treatment. The report never frames one outcome as
+  favorable (`docs/design/MIE_DESIGN_ADAPTATION.md` §2.1).
 
 ### US-007 — Calibration
 
@@ -118,12 +123,16 @@ As an analyst, I want settled predictions scored so that the system improves fro
 | Maintainability | Provider-specific code must be isolated behind interfaces. |
 | Testability | Core scoring and parsing logic must have unit tests. |
 | Reliability | Failed jobs must fail safely and preserve previous data. |
+| Presentation | Reports must conform to `docs/design/ANALYST_REPORT_STANDARD.md`. |
+| Design conformance | No colors, fonts, spacing steps, radii, or component conventions outside `docs/design/DESIGN_SYSTEM_SNAPSHOT.md`. |
+| Accessibility | Any rendered output must satisfy criteria A-1…A-12 in `docs/design/MIE_DESIGN_ADAPTATION.md` §12.2. Contrast is measured, never asserted. |
 
 ## MVP Constraints
 
 - No trade execution.
 - No user management.
 - No frontend required.
+- No independent visual identity. MIE inherits the AJ Digital design system (`docs/design/`).
 - Scheduled batch jobs are sufficient.
 - Perplexity is the only required research provider.
 - Kalshi is the only required market provider.

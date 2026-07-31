@@ -44,6 +44,7 @@ This repository follows:
 - Definition of Ready before implementation.
 - Definition of Done before merge.
 - Definition of Stable after deployment observation.
+- Inherited design system; no MIE-local colors, fonts, or component conventions.
 
 ## Specification Index
 
@@ -65,6 +66,20 @@ The canonical specification lives in `docs/`:
 - `docs/13-ROADMAP.md`
 - `docs/14-ADR.md`
 - `docs/15-CODEX-BUILD-PLAN.md`
+- `docs/16-GOVERNANCE.md`
+
+### Design Contract
+
+MIE inherits the canonical Audio Jones / AJ Digital **Editorial Intelligence Systems** design
+language. It does not define an independent visual identity. These documents are binding:
+
+- `docs/design/DESIGN_SYSTEM_SNAPSHOT.md` — controlled read-only snapshot of the canonical system
+- `docs/design/MIE_DESIGN_ADAPTATION.md` — domain semantics for prediction-market analysis
+- `docs/design/DATA_VISUALIZATION_STANDARD.md` — chart rules
+- `docs/design/ANALYST_REPORT_STANDARD.md` — report structure (**binding for the MVP**)
+
+The MVP remains frontend-free. The report standard binds today because the report is the
+product surface.
 
 ## Current Status
 
