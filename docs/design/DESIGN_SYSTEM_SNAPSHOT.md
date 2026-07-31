@@ -31,6 +31,16 @@ canonical_source:
   repo_head_at_snapshot: 8ab7de423715883423622d95e65add1385f7a124
   repo_head_date: '2026-07-06'
   implementation_of_record: src/app/globals.css
+  companion_document:
+    path: docs/design/design-principles.md
+    document_version: '1.0.0'
+    document_last_updated: '2026-05-06'
+    source_commit: fcbe71e31eddf9131f4403619ac38303915bb811
+    role: 'Decision framework for ambiguity. Inherited EXCEPT §3 — see §5.4.'
+  redirect_stubs:
+    # Both are pointer stubs, not content. Do not resnapshot from them.
+    - docs/DESIGN.md
+    - AUDIOJONES_DESIGN.md
 
 corroborating_source:
   repository: AudioJones-Dev/WEAREAJDIGITAL.COM
@@ -41,6 +51,16 @@ corroborating_source:
   source_commit: 7328768ee407481841f4a4261692e3083f143eaf
   source_commit_date: '2026-06-04'
   role: 'Independent second implementation. Used to confirm token agreement, not as canon.'
+
+not_canonical:
+  # Inspected and explicitly rejected as sources. Recorded so a future
+  # resnapshot does not mistake them for canon.
+  - path: WEAREAJDIGITAL.COM docs/08-assets/brand-guidelines.md
+    reason: 'Unfilled placeholder template. Color values literally read "Hex/RGB definition".'
+  - path: audiojones.com docs/DESIGN.md
+    reason: 'Redirect stub to docs/design/DESIGN.md.'
+  - path: audiojones.com AUDIOJONES_DESIGN.md
+    reason: 'Redirect stub to docs/design/DESIGN.md.'
 
 local_policy:
   editable: false
@@ -159,8 +179,12 @@ decorative effects that don't clarify hierarchy
 
 A resnapshot is the **only** sanctioned way this file changes.
 
-1. **Detect.** Diff upstream `docs/design/DESIGN.md` and `src/app/globals.css` against the
-   `source_commit` recorded in §1.
+1. **Detect.** Diff **all three** upstream artifacts against the commits recorded in §1:
+   `docs/design/DESIGN.md`, `docs/design/design-principles.md`, and `src/app/globals.css`.
+   Diffing only the first two is how §5.1 and §5.4 went unnoticed upstream — the document and
+   the implementation drift apart, and the tie-breaker document drifts furthest because nothing
+   renders from it. **Where the three disagree, the implementation wins (§2) and the
+   disagreement is recorded in §5, never silently reconciled.**
 2. **Review.** Classify each change:
    - _Value change_ to an inherited token → assess MIE impact, especially contrast (§5) and
      any chart scale in `DATA_VISUALIZATION_STANDARD.md`.
@@ -255,7 +279,45 @@ and must not resolve it locally:
 - **Container width.** Five values across sources (`1180/1360`, `1200/1440`, `1280`). MIE
   has no shipped UI, so this is inert today. It must be resolved before any frontend ADR.
 
-### 5.4 Product-noun divergence between the two canonical repos
+### 5.4 `design-principles.md` is stale at the V1 palette — highest-risk drift found
+
+`audiojones.com` `docs/design/design-principles.md` (v1.0.0, last updated **2026-05-06**) predates
+the V2 palette sync in `DESIGN.md` (**2026-05-23**). Its §3 "Color is semantic, not decorative"
+still describes the retired V1 palette:
+
+| `design-principles.md` §3 says                                               | V2 canonical reality                                                        |
+| ---------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| "**Orange** means signal emergence / strategic activation / operator action" | Orange `#FF4500` was **retired**; the role is `--signal-yellow` `#E8FF5A`   |
+| "**Gold** means metric / editorial marker"                                   | Antique-gold `#C8A96A` was **retired**; metric collapsed onto signal-yellow |
+| "Blue means system / framework"                                              | Still correct (`#3B5BFF` → `#4DACFF`)                                       |
+| "Red means critical / destructive / urgent"                                  | Still correct                                                               |
+
+**Why this ranks above the §5.1 finding.** That document opens with _"The decision framework.
+When the spec is ambiguous, return here."_ An agent or contributor resolving an ambiguity is
+explicitly routed to a document that names two retired colors as canonical roles. A stale value
+in a reference table is a lookup error; a stale value in the tie-breaker document is a
+_propagation_ error.
+
+**MIE resolution:**
+
+- MIE inherits `design-principles.md` §§1–2 and §§4–10 as its decision framework. That content is
+  palette-independent and remains correct — signal over noise; hierarchy through type, border,
+  spacing, contrast, rhythm; anchored not floating; restrained motion; editorial authority;
+  restraint over trendiness; precision over decoration; operational clarity over novelty. It is
+  reflected in `MIE_DESIGN_ADAPTATION.md` §1.
+- **MIE does not inherit §3.** Semantic color for MIE is fixed by `MIE_DESIGN_ADAPTATION.md` §2,
+  which derives from the V2 palette in §3.1 above. Neither "orange" nor "gold" exists in MIE.
+- MIE does not inherit §§11–12 (conversion-form and mobile-Safari testing doctrine). Those are
+  specific to audiojones.com lead-capture surfaces and have no MIE analogue.
+
+The still-valid principle that best captures the intent of §3 is the sentence immediately after
+it: _"If you need a color and one of the existing roles doesn't fit, the answer is usually 'use
+surface + border instead,' not 'add a new color.'"_ That rule is inherited verbatim and is the
+practical form of the no-new-tokens prohibition in §4.
+
+Upstream correction requested (§7, D-8).
+
+### 5.5 Product-noun divergence between the two canonical repos
 
 `audiojones.com` uses "Founder Intelligence Systems" (rebranded 2026-06-14, commit `8c27a8a`).
 `WEAREAJDIGITAL.COM` still uses "Applied Intelligence Systems" (2026-06-04).
@@ -265,18 +327,19 @@ Flagged for the brand owner (§7, D-3). MIE inherits the _visual_ system only.
 
 ## 6. Snapshot History
 
-| Version | Date       | Source commit | Change                                                                                                                    |
-| ------- | ---------- | ------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 1.0.0   | 2026-07-31 | `8c27a8ab`    | Initial snapshot. Records V2 Editorial Intelligence Systems tokens, four drift findings (§5), and the resnapshot process. |
+| Version | Date       | Source commit | Change                                                                                                                                                      |
+| ------- | ---------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0.0   | 2026-07-31 | `8c27a8ab`    | Initial snapshot. Records V2 Editorial Intelligence Systems tokens, five drift findings (§5), the companion decision framework, and the resnapshot process. |
 
 ## 7. Human Decisions Required
 
-| ID  | Decision                                                                                                                                                                  | Owner                   | Blocking?                           |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------- |
-| D-1 | Correct `--text-muted` to `#808080` in canonical `DESIGN.md` §5.1                                                                                                         | Design owner (upstream) | No — MIE follows implementation     |
-| D-2 | Define a paper-mode accent set upstream, or ratify MIE's fills-with-labels constraint                                                                                     | Design owner (upstream) | Blocks accent-bearing paper exports |
-| D-3 | Reconcile "Founder" vs "Applied" Intelligence Systems                                                                                                                     | Brand owner             | No — MIE uses neither               |
-| D-4 | Ratify this snapshot as MIE's binding visual contract                                                                                                                     | Operator                | Yes                                 |
-| D-5 | Ratify single-hue alpha ramps as the sanctioned sequential chart scale (`DATA_VISUALIZATION_STANDARD.md` §11.2) — introduces no new hue but does introduce derived values | Design owner            | Blocks sequential-scale charts      |
-| D-6 | Supply the MIOS methodology that defines MIE's ACH procedure — **absent from this repository** (`DATA_VISUALIZATION_STANDARD.md` §16)                                     | Operator                | Blocks ACH output                   |
-| D-7 | Resolve upstream radius and container-width ambiguity (§5.3)                                                                                                              | Design owner (upstream) | Blocks frontend ADR                 |
+| ID  | Decision                                                                                                                                                                     | Owner                   | Blocking?                           |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ----------------------------------- |
+| D-1 | Correct `--text-muted` to `#808080` in canonical `DESIGN.md` §5.1                                                                                                            | Design owner (upstream) | No — MIE follows implementation     |
+| D-2 | Define a paper-mode accent set upstream, or ratify MIE's fills-with-labels constraint                                                                                        | Design owner (upstream) | Blocks accent-bearing paper exports |
+| D-3 | Reconcile "Founder" vs "Applied" Intelligence Systems                                                                                                                        | Brand owner             | No — MIE uses neither               |
+| D-4 | Ratify this snapshot as MIE's binding visual contract                                                                                                                        | Operator                | Yes                                 |
+| D-5 | Ratify single-hue alpha ramps as the sanctioned sequential chart scale (`DATA_VISUALIZATION_STANDARD.md` §11.2) — introduces no new hue but does introduce derived values    | Design owner            | Blocks sequential-scale charts      |
+| D-6 | Supply the MIOS methodology that defines MIE's ACH procedure — **absent from this repository** (`DATA_VISUALIZATION_STANDARD.md` §16)                                        | Operator                | Blocks ACH output                   |
+| D-7 | Resolve upstream radius and container-width ambiguity (§5.3)                                                                                                                 | Design owner (upstream) | Blocks frontend ADR                 |
+| D-8 | Correct `design-principles.md` §3 upstream — it names retired orange and gold as canonical roles, and is the document contributors are told to consult when ambiguous (§5.4) | Design owner (upstream) | No — MIE does not inherit §3        |
