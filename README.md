@@ -45,6 +45,10 @@ This repository follows:
 - Definition of Done before merge.
 - Definition of Stable after deployment observation.
 - Inherited design system; no MIE-local colors, fonts, or component conventions.
+- Explicit domain boundary; no execution authority.
+- Reproducible decision manifests for every recommendation.
+- Separated forecasting and economic-scoring layers.
+- Governed promotion lifecycle; agents cannot promote their own changes.
 
 ## Specification Index
 
@@ -67,6 +71,20 @@ The canonical specification lives in `docs/`:
 - `docs/14-ADR.md`
 - `docs/15-CODEX-BUILD-PLAN.md`
 - `docs/16-GOVERNANCE.md`
+- `docs/17-SHARED-CONTRACT-CANDIDATES.md`
+- `docs/18-DECISION-REPRODUCIBILITY.md`
+- `docs/19-PROMOTION-AND-RETIREMENT-POLICY.md`
+
+### Domain Boundary
+
+MIE is a research, forecasting, expected-value analysis, and calibration platform. It is **not**
+a brokerage, portfolio manager, or execution system — see
+[`adr/0008-mie-domain-boundary.md`](adr/0008-mie-domain-boundary.md).
+
+**Recommendations are not execution instructions.** MIE holds no brokerage credentials, submits
+no orders live or paper, and manages no positions or portfolio state. Any future trading
+capability is a separate bounded system requiring its own ADR, threat model, credentials, and
+deployment approval.
 
 ### Design Contract
 

@@ -86,6 +86,24 @@ MIE inherits the canonical Audio Jones / AJ Digital Editorial Intelligence Syste
 scope. The report standard binds during Phase 1 because Markdown reports are the MVP product
 surface; interface standards bind only after a frontend ADR.
 
+## Outside the MIE Domain
+
+These are **not deferred roadmap items** — they are outside MIE's architectural boundary
+([`adr/0008-mie-domain-boundary.md`](../adr/0008-mie-domain-boundary.md)) and will not appear on
+any MIE roadmap phase. A future trading-intelligence capability is a **separate bounded system**,
+not a later MIE phase:
+
+- brokerage integration;
+- paper execution;
+- live execution;
+- portfolio management;
+- position sizing;
+- intraday position management;
+- automated capital deployment.
+
+The distinction matters: a deferred item is one MIE may eventually build. A boundary item is one
+MIE will not build regardless of evidence of value, because doing so would change what MIE is.
+
 ## Explicitly Deferred
 
 - Automated trading.
@@ -95,6 +113,8 @@ surface; interface standards bind only after a frontend ADR.
 - Mobile app.
 - Reinforcement learning.
 - Fine-tuned forecasting models.
+- Extraction of shared contracts into a package (`docs/17-SHARED-CONTRACT-CANDIDATES.md`).
+- Historical replay harness (`docs/18-DECISION-REPRODUCIBILITY.md`).
 
 ## Promotion Criteria
 

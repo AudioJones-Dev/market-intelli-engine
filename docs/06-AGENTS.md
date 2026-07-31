@@ -7,6 +7,50 @@
 
 Agents do not call each other directly. Workflow orchestration passes structured inputs between stages. This prevents agent spaghetti and keeps execution observable, retryable, and testable.
 
+## Agent Authority Limits
+
+These limits are binding on every agent in this document and any agent added later.
+
+Agents **may**:
+
+- identify weaknesses;
+- propose experiments;
+- generate retrospective findings;
+- recommend changes;
+- produce human-reviewable recommendations.
+
+Agents **may not**:
+
+- approve their own prompt, model, or configuration changes;
+- promote any component between lifecycle states
+  (`docs/19-PROMOTION-AND-RETIREMENT-POLICY.md`);
+- modify production thresholds or scoring policy;
+- activate a new model or provider;
+- remove or bypass a human approval requirement;
+- initiate any capital-allocation, order, or position action
+  (`adr/0008-mie-domain-boundary.md`).
+
+**No agent has execution authority.** An agent's output is an input to a human decision, never
+an instruction. This applies with particular force to Agent 9, which exists to recommend prompt
+and model changes and is therefore the agent most likely to propose changes to itself.
+
+### Required Execution Record
+
+Every agent run records an `agent_executions` row (`docs/03-DATA-MODEL.md`) — **per invocation,
+not per stage**, so a retried or multi-call stage produces several rows. It must capture:
+
+agent ID · agent version · prompt ID · prompt version · system-prompt version · provider ·
+model identifier · model configuration · input schema version · output schema version ·
+lifecycle state · status · retry count · workflow run ID · timestamps.
+
+### Lifecycle Gating
+
+An agent version may operate in a production workflow only when its lifecycle state is
+`approved`. `experimental` and `reviewed` versions do not run in production. `shadow` versions
+run against production-like inputs but write to separate storage and **never reach a report**.
+`suspended` and `retired` versions do not run. An unversioned or unrecognized agent is treated
+as `suspended` and fails closed.
+
 ## Agent Contract Standard
 
 Every agent must define:
@@ -199,6 +243,9 @@ An agent must stop or mark output insufficient when:
 
 ## Human Approval Matrix
 
+> Canonical matrix lives in `docs/16-GOVERNANCE.md`. This list is the agent-facing subset and
+> must not diverge from it.
+
 Human approval is required for:
 
 - New provider.
@@ -207,3 +254,5 @@ Human approval is required for:
 - Database migration.
 - Deployment to production.
 - Any trading-related capability.
+- Promotion of any component between lifecycle states.
+- Activation of a new model or model configuration.

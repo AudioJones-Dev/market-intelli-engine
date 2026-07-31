@@ -7,6 +7,23 @@
 
 Architecture Decision Records capture material decisions so the project can evolve without losing context.
 
+## ADR Registry and Numbering
+
+> **Known defect — reconciliation required.** This repository carries two ADR numbering spaces:
+>
+> 1. The inline "Initial Decisions" list below (ADR-0001 … ADR-0007).
+> 2. The file registry under `adr/`, currently `0001-supabase-kalshi-perplexity-batch-mvp.md`.
+>
+> They collide at ADR-0001: the inline entry is "Use Supabase as system of record" while the
+> file covers Supabase, Kalshi, Perplexity, batch, Markdown, and no-trading together — i.e. the
+> file consolidates what the inline list splits across ADR-0001 … ADR-0006.
+>
+> New ADRs take the next number free in the inline list and are filed under `adr/`, so
+> `adr/0008-mie-domain-boundary.md` is ADR-0008. Accepted ADRs are **not** renumbered here —
+> renumbering an accepted decision breaks every reference to it. Reconciling the two spaces
+> (most likely by superseding the inline list with files) is a human decision and should carry
+> its own ADR.
+
 ## ADR Required When
 
 - Database schema changes after baseline.
@@ -19,6 +36,15 @@ Architecture Decision Records capture material decisions so the project can evol
 - Security model changes.
 - Trading capability proposed.
 - MVP scope changes.
+- Trade execution, brokerage integration, position sizing, or portfolio state is proposed
+  (`adr/0008-mie-domain-boundary.md`).
+- Any shared contract is extracted into a package
+  (`docs/17-SHARED-CONTRACT-CANDIDATES.md`).
+- A new decision-producing model or provider is introduced.
+- A material scoring change is made to any of the four analytical layers
+  (`docs/08-SCORING.md`).
+- Shared runtime infrastructure is introduced across systems.
+- A security boundary changes (`docs/10-SECURITY.md`).
 
 ## ADR Template
 
@@ -124,6 +150,16 @@ than invents. MVP scope is unchanged: no frontend, no new dependencies, no appli
 Consequences: MIE may not define its own colors, fonts, spacing, radii, or component
 conventions. It may define domain semantics (`MIE_DESIGN_ADAPTATION.md`). Upstream design
 changes require a governed resnapshot rather than automatic adoption.
+
+### ADR-0008 — Market Intelligence Engine domain boundary
+
+Status: **Proposed** — see [`adr/0008-mie-domain-boundary.md`](../adr/0008-mie-domain-boundary.md).
+
+Rationale: converts the existing "no trading" scope statement into an architectural boundary
+with enumerated prohibitions and enforcement triggers. ADR-0004 states that MVP excludes
+automated trading; it does not enumerate the adjacent capabilities — position sizing, portfolio
+state, paper execution — that would arrive one at a time without ever presenting as "adding
+trading."
 
 ## Frontend ADR Gate
 
