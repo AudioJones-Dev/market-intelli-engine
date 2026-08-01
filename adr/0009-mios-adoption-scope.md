@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed
+Accepted — ratified by the operator 2026-08-01 (decision D-10)
 
 ## Date
 
@@ -121,4 +121,12 @@ authorize any execution, sizing, or portfolio capability.
 
 ## Approval
 
-Approved by:
+Approved by: Operator, 2026-08-01 (decision D-10).
+
+MIOS layers 6 and 7 are excluded and prohibited. MIOS is adopted as method, never as evidence
+of return. MIOS-derived signal classes are hypotheses under measurement, reported per class in
+calibration.
+
+**Dependency note.** This ADR's central exclusion rests on `adr/0008-mie-domain-boundary.md`,
+which remains **Proposed**. Accepting ADR-0009 accepts the exclusion; it does not by itself
+ratify the boundary that justifies it. ADR-0008 should be ratified for the pair to be coherent.

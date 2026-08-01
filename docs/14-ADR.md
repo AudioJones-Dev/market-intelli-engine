@@ -163,7 +163,8 @@ trading."
 
 ### ADR-0009 — MIOS adoption scope and exclusions
 
-Status: **Proposed** — see [`adr/0009-mios-adoption-scope.md`](../adr/0009-mios-adoption-scope.md).
+Status: **Accepted** — ratified by the operator 2026-08-01 (decision D-10). See
+[`adr/0009-mios-adoption-scope.md`](../adr/0009-mios-adoption-scope.md).
 
 Rationale: MIE adopts MIOS layers 1–5 and 8. **Layers 6 (Position Construction & Risk Sizing)
 and 7 (Execution as Signal Preservation) are excluded** — they are execution-domain functions

@@ -47,14 +47,26 @@ the signal class that generated them so calibration can report per-class Brier s
 If MIOS-style signals carry no predictive value in Kalshi markets, MIE is the instrument that
 will show it.
 
-### Citation gap
+### Citation gap — constraint ratified 2026-08-01
 
 The MIOS document carries numbered citation markers `[1]`–`[30]` with **no accompanying
 reference list**. Under `docs/design/ANALYST_REPORT_STANDARD.md` §4, a `[FACT]` whose source
-reference does not resolve is a defect. MIOS claims may therefore be carried into MIE
-documentation as **method descriptions**, but any MIOS claim used as evidence in an analyst
-report must first resolve to a real source in the Source Appendix. Requesting the bibliography
-is decision D-9 (`docs/design/DESIGN_SYSTEM_SNAPSHOT.md` §7).
+reference does not resolve is a defect.
+
+**Ratified constraint (decision D-9, operator, 2026-08-01) — binding:**
+
+> MIOS claims may be carried into MIE documentation as **method descriptions**. No MIOS claim
+> may be used as **evidence** in an analyst report, prompt, or scoring rule until it resolves to
+> a real entry in the Source Appendix.
+
+This is deliberately asymmetric. MIE can adopt "score hypotheses by weighted inconsistency"
+without a citation, because the procedure stands on its own and MIE measures whether it works.
+MIE cannot assert "social-arbitrage signals precede analyst revisions" on MIOS's authority,
+because that is an empirical claim and its support is a citation marker pointing at nothing.
+
+**The bibliography itself remains outstanding.** Ratifying the constraint does not supply the
+sources; it fixes what happens in their absence. D-9 stays open as an input request until a
+reference list exists.
 
 ## 2. Mandatory Exclusions — Domain Boundary
 
