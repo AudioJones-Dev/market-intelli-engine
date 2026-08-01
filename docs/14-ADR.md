@@ -153,7 +153,8 @@ changes require a governed resnapshot rather than automatic adoption.
 
 ### ADR-0008 — Market Intelligence Engine domain boundary
 
-Status: **Proposed** — see [`adr/0008-mie-domain-boundary.md`](../adr/0008-mie-domain-boundary.md).
+Status: **Accepted** — ratified by the operator 2026-08-01 (decision D-11). See
+[`adr/0008-mie-domain-boundary.md`](../adr/0008-mie-domain-boundary.md).
 
 Rationale: converts the existing "no trading" scope statement into an architectural boundary
 with enumerated prohibitions and enforcement triggers. ADR-0004 states that MVP excludes
