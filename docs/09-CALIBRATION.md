@@ -27,6 +27,24 @@ outcome, and nothing else.
 diagnostic, not a calibration metric. It must never enter the Brier score, the bucket
 assignment, or any promotion decision about a probability method.
 
+## Calibration by Signal Class
+
+MIOS-derived signal classes are adopted as **hypotheses under measurement**, not as validated
+edges (`adr/0009-mios-adoption-scope.md`). MIOS declares its own architecture untested and its
+social-arbitrage evidence a single-practitioner case study.
+
+Each forecast therefore records the **signal class** that generated it — for example
+search/social trend, filing-derived, regulatory-calendar, base-rate-only. Calibration reports
+Brier scores **per signal class**, not pooled.
+
+Pooling would hide exactly the finding that matters: whether a given class of evidence carries
+predictive value in Kalshi markets at all. Per-class reporting is subject to the same minimum
+sample-size rule as probability buckets — a class below the threshold is marked
+`LOW n — not interpretable` and excluded from any claim.
+
+This makes MIE the measuring instrument for MIOS's untested claims rather than a system that
+assumes them.
+
 ## Attribution
 
 Every calibration record must be attributable to the components that produced the forecast:

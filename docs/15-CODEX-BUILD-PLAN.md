@@ -113,9 +113,33 @@ Implement prompt loading/versioning.
 
 Generate structured probability estimates.
 
-### Milestone 15 — Counterargument stage
+### Milestone 15 — Counterargument and ACH stage
 
-Generate opposing case and missing evidence summary.
+Generate the ACH matrix and the opposing case. Procedure: `docs/21-ACH-PROCEDURE.md`.
+
+**Unblocked.** This milestone was previously blocked on decision D-6 — ACH presentation was
+specified with no procedure behind it. The procedure now exists.
+
+Scope:
+
+- `MIE-ACH-MATRIX` prompt producing hypotheses and consistency cells only.
+- **Deterministic post-processing outside the model:** diagnosticity, weighted inconsistency,
+  coverage, sensitivity. The model supplies judgements; the arithmetic must not be an LLM output.
+- Persist the full matrix — every cell, including non-diagnostic and excluded rows — referencing
+  evidence IDs and source provenance.
+
+Acceptance criteria:
+
+- ≥3 and ≤7 hypotheses, each tagged `YES` / `NO` / `AMBIGUOUS`.
+- Hypotheses enumerated before any probability estimate is visible to the agent.
+- A settlement-ambiguity hypothesis is present where resolution criteria are contestable.
+- Non-diagnostic items retained and marked, never dropped.
+- Coverage computed; `LOW COVERAGE` leaders flagged and barred from being reported as the leader
+  unedited.
+- Sensitivity analysis identifies critical evidence, which propagates into the forecast's
+  invalidation conditions.
+- **No code path converts inconsistency scores into a probability.** Add a test asserting this.
+- Fewer than three defensible hypotheses returns insufficient rather than a padded set.
 
 ### Milestone 16 — EV calculator
 

@@ -74,6 +74,8 @@ The canonical specification lives in `docs/`:
 - `docs/17-SHARED-CONTRACT-CANDIDATES.md`
 - `docs/18-DECISION-REPRODUCIBILITY.md`
 - `docs/19-PROMOTION-AND-RETIREMENT-POLICY.md`
+- `docs/20-MIOS-METHODOLOGY.md`
+- `docs/21-ACH-PROCEDURE.md`
 
 ### Domain Boundary
 

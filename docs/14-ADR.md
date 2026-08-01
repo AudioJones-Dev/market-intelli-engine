@@ -161,6 +161,16 @@ automated trading; it does not enumerate the adjacent capabilities — position 
 state, paper execution — that would arrive one at a time without ever presenting as "adding
 trading."
 
+### ADR-0009 — MIOS adoption scope and exclusions
+
+Status: **Proposed** — see [`adr/0009-mios-adoption-scope.md`](../adr/0009-mios-adoption-scope.md).
+
+Rationale: MIE adopts MIOS layers 1–5 and 8. **Layers 6 (Position Construction & Risk Sizing)
+and 7 (Execution as Signal Preservation) are excluded** — they are execution-domain functions
+prohibited by ADR-0008. MIOS is adopted as method, not as evidence of return; it declares its own
+integrated architecture untested. Closes decision D-6 by supplying the ACH procedure
+(`docs/21-ACH-PROCEDURE.md`).
+
 ## Frontend ADR Gate
 
 **No analyst interface may be implemented until a frontend ADR is approved.** This gate is

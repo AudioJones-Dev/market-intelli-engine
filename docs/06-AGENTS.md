@@ -177,22 +177,36 @@ Outputs:
 
 Important: analysis should support a mode where market price is withheld until after probability estimation to reduce anchoring.
 
-## Agent 6 — Counterargument Agent
+## Agent 6 — Counterargument and ACH Agent
 
-Purpose: generate the strongest opposing case.
+Purpose: enumerate competing resolution hypotheses, score evidence against them, and generate
+the strongest opposing case.
+
+Procedure: `docs/21-ACH-PROCEDURE.md`. Prompt contracts: `MIE-ACH-MATRIX`, `MIE-COUNTERARGUMENT`.
 
 Inputs:
 
-- Evidence package.
-- Probability estimate.
-- Initial recommendation.
+- Evidence package with per-item IDs, quality scores, and status.
+- Settlement rules.
+- Probability estimate — **for the counterargument stage only**.
 
 Outputs:
 
+- ACH matrix: hypotheses, consistency scores, per-cell rationale.
 - Strongest contrary interpretation.
 - Evidence gaps.
 - Failure modes.
 - Conditions that would reverse the thesis.
+
+Ordering constraint: **hypotheses are enumerated before the agent sees any probability
+estimate.** An ACH matrix built to fit a conclusion already formed is worse than no matrix — it
+launders a prior into apparent structure.
+
+Deterministic post-processing (outside the model): diagnosticity, weighted inconsistency,
+coverage, and sensitivity. The agent supplies judgements; the arithmetic is not the model's job.
+
+Failure behavior: if three defensible hypotheses cannot be produced, return insufficient rather
+than padding the set.
 
 ## Agent 7 — Recommendation Agent
 
