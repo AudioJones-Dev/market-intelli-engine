@@ -134,6 +134,11 @@ MVP target:
 - Daily report.
 - Weekly calibration review.
 
+Output structure is fixed by `docs/design/ANALYST_REPORT_STANDARD.md`. Because the MVP has no
+frontend, the report is the product surface, so that standard is an acceptance contract rather
+than a style guide. Templates live in `reports/templates/`; generated output in
+`reports/generated/`.
+
 ### 10. Prediction Ledger
 
 Immutable record of each recommendation and its inputs.
@@ -218,3 +223,5 @@ An ADR is required for:
 - Changing scoring formulas.
 - Changing recommendation thresholds.
 - Introducing new infrastructure.
+- Adopting a design-system resnapshot or an upstream design change.
+- Adding a shared design-system package or HTML/PDF report rendering.

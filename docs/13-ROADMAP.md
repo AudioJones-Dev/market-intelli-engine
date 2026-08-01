@@ -64,6 +64,27 @@ Requires ADR and evidence of value:
 - Advanced alerting.
 - Category-specific forecasting adapters.
 - Automated research backfills.
+- HTML/PDF report rendering.
+- Shared design-system package.
+
+### Deferred Analyst Interface
+
+Blocked by the frontend ADR gate (`docs/14-ADR.md`). The design contract for these surfaces is
+already fixed by `docs/design/`, so that when they are built they inherit rather than invent:
+
+market candidate inbox · contract-rules viewer · evidence timeline · source-quality matrix ·
+ACH hypothesis table · forecast probability history · market-price comparison ·
+red-team objections · human decision gate · calibration dashboard · settlement postmortems
+
+Documenting the visual contract does **not** promote any of these into scope. Promotion still
+requires the criteria below.
+
+## Design System
+
+MIE inherits the canonical Audio Jones / AJ Digital Editorial Intelligence Systems language
+(`docs/design/`, `docs/16-GOVERNANCE.md`). This is documentation-only and does not expand MVP
+scope. The report standard binds during Phase 1 because Markdown reports are the MVP product
+surface; interface standards bind only after a frontend ADR.
 
 ## Explicitly Deferred
 
