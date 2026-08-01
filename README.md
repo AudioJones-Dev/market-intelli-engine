@@ -78,6 +78,10 @@ language. It does not define an independent visual identity. These documents are
 - `docs/design/DATA_VISUALIZATION_STANDARD.md` — chart rules
 - `docs/design/ANALYST_REPORT_STANDARD.md` — report structure (**binding for the MVP**)
 
+**Ratified 2026-08-01** (ADR-0007). These documents are MIE's binding visual contract: MIE may
+define domain-specific semantic mappings but may not invent an independent palette, typography
+system, spacing system, or component language.
+
 The MVP remains frontend-free. The report standard binds today because the report is the
 product surface.
 

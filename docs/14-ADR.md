@@ -113,7 +113,7 @@ Rationale: Markdown is auditable, easy to version, and sufficient for MVP report
 
 ### ADR-0007 — Inherit the Audio Jones / AJ Digital design system
 
-Status: **Proposed** — requires operator ratification (decision D-4 in
+Status: **Accepted** — ratified by the operator 2026-08-01 (decision D-4 in
 `docs/design/DESIGN_SYSTEM_SNAPSHOT.md` §7).
 
 Rationale: MIE is an AJ Digital product surface and should not carry an independent visual
