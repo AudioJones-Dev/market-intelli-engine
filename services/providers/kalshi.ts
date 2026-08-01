@@ -68,7 +68,7 @@ export class KalshiProvider implements MarketProvider {
 
     return {
       markets: (data.markets ?? []).map((market) => this.normalizeMarket(market)),
-      nextCursor: data.cursor || undefined
+      ...optional('nextCursor', data.cursor || undefined)
     };
   }
 
@@ -156,17 +156,17 @@ export class KalshiProvider implements MarketProvider {
     return {
       provider: this.name,
       ticker: market.ticker,
-      eventTicker: market.event_ticker,
       title: market.title,
-      category: this.inferCategory(market),
       status: market.status,
-      closeTime: market.close_time,
-      yesBid: parseOptionalNumber(market.yes_bid_dollars),
-      yesAsk: parseOptionalNumber(market.yes_ask_dollars),
-      lastPrice: parseOptionalNumber(market.last_price_dollars),
-      volume: parseOptionalNumber(market.volume_fp),
-      openInterest: parseOptionalNumber(market.open_interest_fp),
-      raw: market
+      raw: market,
+      ...optional('eventTicker', market.event_ticker),
+      ...optional('category', this.inferCategory(market)),
+      ...optional('closeTime', market.close_time),
+      ...optional('yesBid', parseOptionalNumber(market.yes_bid_dollars)),
+      ...optional('yesAsk', parseOptionalNumber(market.yes_ask_dollars)),
+      ...optional('lastPrice', parseOptionalNumber(market.last_price_dollars)),
+      ...optional('volume', parseOptionalNumber(market.volume_fp)),
+      ...optional('openInterest', parseOptionalNumber(market.open_interest_fp))
     };
   }
 
@@ -178,6 +178,16 @@ export class KalshiProvider implements MarketProvider {
 
     return eventTicker.split('-')[0]?.toLowerCase();
   }
+}
+
+/**
+ * Yields a spreadable fragment that carries `key` only when `value` is present.
+ *
+ * `exactOptionalPropertyTypes` distinguishes "absent" from "present but undefined",
+ * so an optional contract field must be omitted rather than set to `undefined`.
+ */
+function optional<K extends string, V>(key: K, value: V | undefined): { [P in K]?: V } {
+  return (value === undefined ? {} : { [key]: value }) as { [P in K]?: V };
 }
 
 function parseOptionalNumber(value: unknown): number | undefined {

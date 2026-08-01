@@ -11,7 +11,7 @@ function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
 
 describe('KalshiProvider', () => {
   it('lists and normalizes markets', async () => {
-    const fetchFn = vi.fn(async () =>
+    const fetchFn = vi.fn<typeof fetch>(async () =>
       jsonResponse({
         markets: [
           {
@@ -39,7 +39,9 @@ describe('KalshiProvider', () => {
     const result = await provider.listMarkets({ status: 'open', limit: 100, cursor: 'abc' });
 
     expect(fetchFn).toHaveBeenCalledOnce();
-    expect(String(fetchFn.mock.calls[0]?.[0])).toContain('/markets?status=open&limit=100&cursor=abc');
+    expect(String(fetchFn.mock.calls[0]?.[0])).toContain(
+      '/markets?status=open&limit=100&cursor=abc'
+    );
     expect(result.nextCursor).toBe('next-page');
     expect(result.markets[0]).toMatchObject({
       provider: 'kalshi',
@@ -56,7 +58,7 @@ describe('KalshiProvider', () => {
   });
 
   it('gets one market by ticker', async () => {
-    const fetchFn = vi.fn(async () =>
+    const fetchFn = vi.fn<typeof fetch>(async () =>
       jsonResponse({
         market: {
           ticker: 'KXTEST-26JUN30',
@@ -70,7 +72,9 @@ describe('KalshiProvider', () => {
     const provider = new KalshiProvider({ baseUrl: 'https://example.test/trade-api/v2/', fetchFn });
     const market = await provider.getMarket('KXTEST-26JUN30');
 
-    expect(String(fetchFn.mock.calls[0]?.[0])).toBe('https://example.test/trade-api/v2/markets/KXTEST-26JUN30');
+    expect(String(fetchFn.mock.calls[0]?.[0])).toBe(
+      'https://example.test/trade-api/v2/markets/KXTEST-26JUN30'
+    );
     expect(market.ticker).toBe('KXTEST-26JUN30');
   });
 
@@ -78,7 +82,7 @@ describe('KalshiProvider', () => {
     const fetchFn = vi.fn(async () => jsonResponse({ error: 'bad' }, { status: 503 }));
     const provider = new KalshiProvider({ baseUrl: 'https://example.test/trade-api/v2', fetchFn });
 
-    await expect(provider.listMarkets()).rejects.toMatchObject<Partial<ProviderError>>({
+    await expect(provider.listMarkets()).rejects.toMatchObject({
       name: 'ProviderError',
       context: expect.objectContaining({ retryable: true, statusCode: 503 })
     });
