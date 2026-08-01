@@ -127,6 +127,7 @@ MIOS layers 6 and 7 are excluded and prohibited. MIOS is adopted as method, neve
 of return. MIOS-derived signal classes are hypotheses under measurement, reported per class in
 calibration.
 
-**Dependency note.** This ADR's central exclusion rests on `adr/0008-mie-domain-boundary.md`,
-which remains **Proposed**. Accepting ADR-0009 accepts the exclusion; it does not by itself
-ratify the boundary that justifies it. ADR-0008 should be ratified for the pair to be coherent.
+**Dependency note — resolved.** This ADR's central exclusion rests on
+`adr/0008-mie-domain-boundary.md`, which was ratified the same day (decision D-11) and is
+**Accepted**. Both ADRs are in force: the boundary prohibits the capabilities, and this ADR
+applies that prohibition to MIOS layers 6 and 7.
