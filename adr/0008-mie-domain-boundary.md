@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed
+Accepted — ratified by the operator 2026-08-01 (decision D-11)
 
 ## Date
 
@@ -178,4 +178,13 @@ It prevents MIE from executing or managing those trades.
 
 ## Approval
 
-Approved by:
+Approved by: Operator, 2026-08-01 (decision D-11).
+
+The domain boundary is in force. MIE is a research, forecasting, expected-value analysis, and
+calibration platform. It holds no brokerage credentials, no execution authority, and no
+portfolio state. The capabilities enumerated under **Decision** are prohibited, and the
+**Enforcement** list requires a new ADR, an independent threat model, separate credentials, and
+human approval before any of them is reconsidered.
+
+Capabilities beyond this boundary are **not deferred roadmap items**. They belong to a separate
+bounded system (`docs/13-ROADMAP.md` § Outside the MIE Domain).
