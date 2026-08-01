@@ -1,6 +1,8 @@
 ---
 title: 'MIE Design System Snapshot'
-status: 'controlled read-only snapshot'
+status: 'ratified — controlled read-only snapshot'
+ratified: '2026-08-01'
+ratified_decision: 'D-4'
 snapshot_version: '1.0.0'
 snapshot_date: '2026-07-31'
 design_language: 'Editorial Intelligence Systems'
@@ -338,7 +340,7 @@ Flagged for the brand owner (§7, D-3). MIE inherits the _visual_ system only.
 | D-1 | Correct `--text-muted` to `#808080` in canonical `DESIGN.md` §5.1                                                                                                            | Design owner (upstream) | No — MIE follows implementation     |
 | D-2 | Define a paper-mode accent set upstream, or ratify MIE's fills-with-labels constraint                                                                                        | Design owner (upstream) | Blocks accent-bearing paper exports |
 | D-3 | Reconcile "Founder" vs "Applied" Intelligence Systems                                                                                                                        | Brand owner             | No — MIE uses neither               |
-| D-4 | Ratify this snapshot as MIE's binding visual contract                                                                                                                        | Operator                | Yes                                 |
+| ~~D-4~~ | ~~Ratify this snapshot as MIE's binding visual contract~~ — **RATIFIED 2026-08-01.** This snapshot and the three adaptation documents are MIE's binding visual contract; ADR-0007 accepted | Operator | Closed |
 | D-5 | Ratify single-hue alpha ramps as the sanctioned sequential chart scale (`DATA_VISUALIZATION_STANDARD.md` §11.2) — introduces no new hue but does introduce derived values    | Design owner            | Blocks sequential-scale charts      |
 | D-6 | Supply the MIOS methodology that defines MIE's ACH procedure — **absent from this repository** (`DATA_VISUALIZATION_STANDARD.md` §16)                                        | Operator                | Blocks ACH output                   |
 | D-7 | Resolve upstream radius and container-width ambiguity (§5.3)                                                                                                                 | Design owner (upstream) | Blocks frontend ADR                 |
