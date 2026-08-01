@@ -66,9 +66,11 @@ export class KalshiProvider implements MarketProvider {
     const url = this.buildMarketsUrl(params);
     const data = await this.getJson<KalshiMarketsResponse>(url, 'listMarkets');
 
+    const nextCursor = data.cursor || undefined;
+
     return {
       markets: (data.markets ?? []).map((market) => this.normalizeMarket(market)),
-      nextCursor: data.cursor || undefined
+      ...(nextCursor !== undefined && { nextCursor })
     };
   }
 
@@ -153,19 +155,28 @@ export class KalshiProvider implements MarketProvider {
       });
     }
 
+    const eventTicker = market.event_ticker;
+    const category = this.inferCategory(market);
+    const closeTime = market.close_time;
+    const yesBid = parseOptionalNumber(market.yes_bid_dollars);
+    const yesAsk = parseOptionalNumber(market.yes_ask_dollars);
+    const lastPrice = parseOptionalNumber(market.last_price_dollars);
+    const volume = parseOptionalNumber(market.volume_fp);
+    const openInterest = parseOptionalNumber(market.open_interest_fp);
+
     return {
       provider: this.name,
       ticker: market.ticker,
-      eventTicker: market.event_ticker,
+      ...(eventTicker !== undefined && { eventTicker }),
       title: market.title,
-      category: this.inferCategory(market),
+      ...(category !== undefined && { category }),
       status: market.status,
-      closeTime: market.close_time,
-      yesBid: parseOptionalNumber(market.yes_bid_dollars),
-      yesAsk: parseOptionalNumber(market.yes_ask_dollars),
-      lastPrice: parseOptionalNumber(market.last_price_dollars),
-      volume: parseOptionalNumber(market.volume_fp),
-      openInterest: parseOptionalNumber(market.open_interest_fp),
+      ...(closeTime !== undefined && { closeTime }),
+      ...(yesBid !== undefined && { yesBid }),
+      ...(yesAsk !== undefined && { yesAsk }),
+      ...(lastPrice !== undefined && { lastPrice }),
+      ...(volume !== undefined && { volume }),
+      ...(openInterest !== undefined && { openInterest }),
       raw: market
     };
   }
