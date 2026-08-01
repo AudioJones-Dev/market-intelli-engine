@@ -66,9 +66,11 @@ export class KalshiProvider implements MarketProvider {
     const url = this.buildMarketsUrl(params);
     const data = await this.getJson<KalshiMarketsResponse>(url, 'listMarkets');
 
+    const nextCursor = data.cursor || undefined;
+
     return {
       markets: (data.markets ?? []).map((market) => this.normalizeMarket(market)),
-      ...optional('nextCursor', data.cursor || undefined)
+      ...(nextCursor !== undefined && { nextCursor })
     };
   }
 
@@ -153,20 +155,29 @@ export class KalshiProvider implements MarketProvider {
       });
     }
 
+    const eventTicker = market.event_ticker;
+    const category = this.inferCategory(market);
+    const closeTime = market.close_time;
+    const yesBid = parseOptionalNumber(market.yes_bid_dollars);
+    const yesAsk = parseOptionalNumber(market.yes_ask_dollars);
+    const lastPrice = parseOptionalNumber(market.last_price_dollars);
+    const volume = parseOptionalNumber(market.volume_fp);
+    const openInterest = parseOptionalNumber(market.open_interest_fp);
+
     return {
       provider: this.name,
       ticker: market.ticker,
+      ...(eventTicker !== undefined && { eventTicker }),
       title: market.title,
+      ...(category !== undefined && { category }),
       status: market.status,
-      raw: market,
-      ...optional('eventTicker', market.event_ticker),
-      ...optional('category', this.inferCategory(market)),
-      ...optional('closeTime', market.close_time),
-      ...optional('yesBid', parseOptionalNumber(market.yes_bid_dollars)),
-      ...optional('yesAsk', parseOptionalNumber(market.yes_ask_dollars)),
-      ...optional('lastPrice', parseOptionalNumber(market.last_price_dollars)),
-      ...optional('volume', parseOptionalNumber(market.volume_fp)),
-      ...optional('openInterest', parseOptionalNumber(market.open_interest_fp))
+      ...(closeTime !== undefined && { closeTime }),
+      ...(yesBid !== undefined && { yesBid }),
+      ...(yesAsk !== undefined && { yesAsk }),
+      ...(lastPrice !== undefined && { lastPrice }),
+      ...(volume !== undefined && { volume }),
+      ...(openInterest !== undefined && { openInterest }),
+      raw: market
     };
   }
 
@@ -178,16 +189,6 @@ export class KalshiProvider implements MarketProvider {
 
     return eventTicker.split('-')[0]?.toLowerCase();
   }
-}
-
-/**
- * Yields a spreadable fragment that carries `key` only when `value` is present.
- *
- * `exactOptionalPropertyTypes` distinguishes "absent" from "present but undefined",
- * so an optional contract field must be omitted rather than set to `undefined`.
- */
-function optional<K extends string, V>(key: K, value: V | undefined): { [P in K]?: V } {
-  return (value === undefined ? {} : { [key]: value }) as { [P in K]?: V };
 }
 
 function parseOptionalNumber(value: unknown): number | undefined {

@@ -79,7 +79,9 @@ describe('KalshiProvider', () => {
   });
 
   it('marks 5xx errors as retryable provider errors', async () => {
-    const fetchFn = vi.fn(async () => jsonResponse({ error: 'bad' }, { status: 503 }));
+    const fetchFn = vi.fn<typeof fetch>(async () =>
+      jsonResponse({ error: 'bad' }, { status: 503 })
+    );
     const provider = new KalshiProvider({ baseUrl: 'https://example.test/trade-api/v2', fetchFn });
 
     await expect(provider.listMarkets()).rejects.toMatchObject({
