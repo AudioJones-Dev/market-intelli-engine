@@ -29,7 +29,9 @@ MIE v1 focuses on the minimum system required to produce auditable forecasts:
 
 ## Explicit Non-Goals
 
-MVP does **not** include automated trading, portfolio optimization, Kelly sizing, multi-provider market ingestion, custom frontend, mobile app, user accounts, live websocket streaming, reinforcement learning, or fine-tuned forecasting models.
+MVP does **not** include automated trading, portfolio optimization, Kelly sizing, multi-provider market ingestion, additional research providers, custom frontend, mobile app, user accounts, live websocket streaming, reinforcement learning, fine-tuned forecasting models, Slack/email/Obsidian delivery beyond Markdown storage, a shared design-system package, HTML/PDF report rendering, or live data visualization.
+
+The authoritative deferral list is the Deferred Milestones section of `docs/15-CODEX-BUILD-PLAN.md`.
 
 ## Governance
 
@@ -68,6 +70,11 @@ The canonical specification lives in `docs/`:
 - `docs/15-CODEX-BUILD-PLAN.md`
 - `docs/16-GOVERNANCE.md`
 
+Alongside the numbered specification:
+
+- `docs/milestones/` — per-milestone completion records for merged milestones
+- `adr/` — architecture decision records
+
 ### Design Contract
 
 MIE inherits the canonical Audio Jones / AJ Digital **Editorial Intelligence Systems** design
@@ -85,8 +92,61 @@ system, spacing system, or component language.
 The MVP remains frontend-free. The report standard binds today because the report is the
 product surface.
 
+## Repository Layout
+
+Top-level directories (root config files omitted):
+
+```text
+market-intelli-engine/
+├── README.md
+├── docs/          # canonical specification, milestone records, design contract
+├── adr/           # architecture decision records
+├── database/      # Supabase migrations
+├── services/      # runtime service boundaries (providers/ implemented)
+├── workflows/     # scheduled workflow definitions (not yet populated)
+├── scripts/       # utility scripts (not yet populated)
+├── prompts/       # versioned prompt registry (not yet populated)
+├── reports/       # report templates and generated output (not yet populated)
+├── tests/         # Vitest suites
+└── .github/       # CI workflow
+```
+
+The canonical structure, including planned `services/` subdirectories, is defined in
+[`docs/02-ARCHITECTURE.md`](docs/02-ARCHITECTURE.md).
+
+## Getting Started
+
+Requires Node.js. `package.json` declares `engines.node` as `>=20.0.0`; CI runs Node 24, so
+match CI when in doubt.
+
+```bash
+npm install
+cp .env.example .env   # then fill in the required values
+npm run verify
+```
+
+`npm run verify` chains the four gates CI enforces on every pull request and on every push to
+`main`: `typecheck`, `lint`, `format`, and `test`. A change is not ready to merge until it
+passes.
+
+`.env.example` enumerates the environment variables the specification requires — see
+`docs/04-API-SPEC.md`. No runtime code reads them yet. `.env` itself is git-ignored and must
+never be committed.
+
+> Note for Windows contributors: the repository has no `.gitattributes`, so with
+> `core.autocrlf=true` files are checked out with CRLF and the Prettier `format` gate can fail
+> locally on files you did not touch. CI checks out LF and is the authoritative result.
+
 ## Current Status
 
-Status: Specification authoring.
+Milestones 01–05 of the 32-milestone plan in
+[`docs/15-CODEX-BUILD-PLAN.md`](docs/15-CODEX-BUILD-PLAN.md) are merged:
 
-Implementation should not begin until the relevant milestone satisfies the Definition of Ready.
+- **01–02** — repository structure and tooling baseline
+- **03** — Supabase baseline migration
+- **04** — provider interface contracts
+- **05** — read-only Kalshi market provider
+
+Nothing downstream of the provider layer is implemented yet: no ingestion, ranking, research,
+probability estimation, EV calculation, reporting, ledger, or calibration. Each remaining
+milestone must satisfy the Definition of Ready before implementation begins.
