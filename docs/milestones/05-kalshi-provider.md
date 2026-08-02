@@ -75,7 +75,7 @@ Modified: `services/providers/index.ts` gained the `KalshiProvider` and `KalshiP
 - `tests/kalshi-provider.test.ts` asserts that `getMarket` requests the exact expected URL, which proves the trailing slash is stripped from the configured base URL.
 - `tests/kalshi-provider.test.ts` asserts that a `503` response rejects with a `ProviderError` whose context carries `retryable: true` and `statusCode: 503`.
 - `tests/kalshi-provider.test.ts` asserts that a blank ticker rejects with a `ProviderError` and that the fetch mock was never called.
-- Every case injects a `vi.fn<typeof fetch>` mock, so the suite performs no network access.
+- Every case injects a fetch mock, so the suite performs no network access. The three cases that return a response type their mock as `vi.fn<typeof fetch>`; the blank-ticker case leaves its mock untyped because it asserts only that the mock was never called.
 
 ## Definition of Done
 
@@ -87,4 +87,4 @@ Modified: `services/providers/index.ts` gained the `KalshiProvider` and `KalshiP
 
 ## Definition of Stable
 
-The implementation merged in commit `60f4ad0` did not satisfy the `npm run typecheck` or `npm run format` gate. Normalization assigned `undefined` to optional keys that `exactOptionalPropertyTypes` forbids, the fetch mocks were untyped, and two assertions in the test suite exceeded the configured print width. Commit `32196f9` restored all four verify gates by spreading optional keys conditionally rather than widening the provider contracts to accept `undefined`, typing each mock as `typeof fetch`, and reformatting the test file. The milestone is therefore stable only from `32196f9` onward, and remains subject to observation against the live Kalshi API, which no test in this milestone exercises.
+The implementation merged in commit `60f4ad0` did not satisfy the `npm run typecheck` or `npm run format` gate. Normalization assigned `undefined` to optional keys that `exactOptionalPropertyTypes` forbids, the fetch mocks were untyped, and two assertions in the test suite exceeded the configured print width. Commit `32196f9` restored all four verify gates by spreading optional keys conditionally rather than widening the provider contracts to accept `undefined`, typing the three response-returning fetch mocks as `typeof fetch`, and reformatting the test file. The milestone is therefore stable only from `32196f9` onward, and remains subject to observation against the live Kalshi API, which no test in this milestone exercises.
