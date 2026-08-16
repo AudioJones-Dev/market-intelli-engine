@@ -1,0 +1,9 @@
+# Normalize all text files to LF in the repository and in the working tree.
+#
+# Without this, `core.autocrlf=true` checks files out as CRLF on Windows while
+# git stores LF. Prettier defaults to `endOfLine: "lf"`, so `npm run format`
+# then fails on every file it checks locally, even ones that were never edited.
+# CI runs on ubuntu and checks out LF, so it never saw the problem.
+#
+# `text=auto` still lets git detect and leave binary files alone.
+* text=auto eol=lf
