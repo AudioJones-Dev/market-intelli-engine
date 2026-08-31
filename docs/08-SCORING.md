@@ -42,7 +42,12 @@ Recommendation policy           (Layer 4)
 **Purpose:** estimate the probability that the event will settle as YES.
 
 Inputs: market question · settlement rules · normalized evidence · evidence quality · unknowns ·
-assumptions · counterarguments.
+assumptions · counterarguments · **ACH matrix** (`docs/21-ACH-PROCEDURE.md`).
+
+ACH runs before this layer and constrains it: the reasoning must name the leading hypothesis and
+explain any divergence from it; critical evidence becomes an invalidation condition; a
+`LOW COVERAGE` leader caps confidence. **ACH produces a ranking, never a probability** — no
+implementation may normalise inconsistency scores into one.
 
 Outputs: estimated probability · probability range where supported · confidence score ·
 assumptions · invalidation conditions · forecast-method version.

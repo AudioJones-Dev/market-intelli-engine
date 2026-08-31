@@ -249,7 +249,33 @@ Layer 1 output. **Must remain valid even if no market price is available.**
 | invalidation_conditions | jsonb | What would change the estimate |
 | forecast_method_version | text | e.g. `probability-policy-v1` |
 | market_price_visible_during_estimation | boolean | Anchoring control state |
+| ach_matrix_id | uuid | FK to ach_matrices |
+| signal_class | text | Signal class that generated the forecast — per-class calibration (`docs/09-CALIBRATION.md`) |
 | created_at | timestamptz | Insert time |
+
+### `ach_matrices`
+
+Immutable Analysis of Competing Hypotheses record. Procedure: `docs/21-ACH-PROCEDURE.md`.
+
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid | Primary key |
+| market_snapshot_id | uuid | FK |
+| research_dossier_id | uuid | FK |
+| hypotheses | jsonb | id, statement, settles (YES/NO/AMBIGUOUS) |
+| cells | jsonb | evidence_id, hypothesis_id, score (-2..2), rationale |
+| excluded_evidence | jsonb | Retained with exclusion reason — never dropped |
+| diagnosticity | jsonb | Per evidence item |
+| inconsistency | jsonb | Weighted inconsistency per hypothesis |
+| coverage | jsonb | Diagnostic-item count per hypothesis |
+| leading_hypothesis_id | text | Lowest weighted inconsistency |
+| low_coverage_flag | boolean | Leader leads by absence of evidence |
+| critical_evidence_ids | jsonb | Items whose removal flips the ranking |
+| ach_procedure_version | text | e.g. `v1` |
+| created_at | timestamptz | Insert time |
+
+No probability column. ACH produces a ranking, never a probability
+(`docs/21-ACH-PROCEDURE.md` §9).
 
 No price, edge, or EV column appears here. That is the point of the separation.
 
@@ -336,6 +362,8 @@ Addressable sources with retrieval context. Today sources are `jsonb` inside
 | content_hash | text | Hash of retrieved content |
 | source_type | text | Classification |
 | authority_classification | text | Authority band |
+| tier | integer | MIOS information tier, 2-4. Tier 1 is unavailable to a batch system (`docs/20-MIOS-METHODOLOGY.md` §4.1) |
+| seasonally_adjusted | boolean | Required for search/social trend evidence; unadjusted must be labelled |
 | raw_response_ref | text | Provider payload reference |
 | verification_state | text | verified/stale/unverifiable |
 
