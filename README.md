@@ -79,6 +79,11 @@ The canonical specification lives in `docs/`:
 - `docs/20-MIOS-METHODOLOGY.md`
 - `docs/21-ACH-PROCEDURE.md`
 
+Alongside the numbered specification:
+
+- `docs/milestones/` — per-milestone completion records for merged milestones
+- `adr/` — architecture decision records
+
 ### Domain Boundary
 
 MIE is a research, forecasting, expected-value analysis, and calibration platform. It is **not**
@@ -89,11 +94,6 @@ a brokerage, portfolio manager, or execution system — see
 no orders live or paper, and manages no positions or portfolio state. Any future trading
 capability is a separate bounded system requiring its own ADR, threat model, credentials, and
 deployment approval.
-
-Alongside the numbered specification:
-
-- `docs/milestones/` — per-milestone completion records for merged milestones
-- `adr/` — architecture decision records
 
 ### Design Contract
 
