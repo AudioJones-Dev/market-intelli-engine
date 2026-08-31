@@ -7,6 +7,115 @@
 
 Define deterministic formulas and rules for market probability, edge, expected value, evidence quality, confidence, research grade, and recommendation labels.
 
+## Scoring-Layer Separation
+
+MIE separates four analytical layers. They must not collapse into one calculation.
+
+**A good forecast can identify a bad trade. A profitable trade can result from a poorly
+calibrated forecast and luck.** Measuring these together makes both unmeasurable — a combined
+score cannot tell you whether the probability model improved or the market simply moved.
+
+```text
+Evidence package
+    ↓
+Probability estimation          (Layer 1)
+    ↓
+Forecast record
+    ↓
+Forecast calibration            (Layer 2)
+```
+
+Separately:
+
+```text
+Forecast probability
++ Current market snapshot
++ Liquidity and spread conditions
+    ↓
+Economic scoring                (Layer 3)
+    ↓
+Recommendation policy           (Layer 4)
+```
+
+### Layer 1 — Probability Estimation
+
+**Purpose:** estimate the probability that the event will settle as YES.
+
+Inputs: market question · settlement rules · normalized evidence · evidence quality · unknowns ·
+assumptions · counterarguments · **ACH matrix** (`docs/21-ACH-PROCEDURE.md`).
+
+ACH runs before this layer and constrains it: the reasoning must name the leading hypothesis and
+explain any divergence from it; critical evidence becomes an invalidation condition; a
+`LOW COVERAGE` leader caps confidence. **ACH produces a ranking, never a probability** — no
+implementation may normalise inconsistency scores into one.
+
+Outputs: estimated probability · probability range where supported · confidence score ·
+assumptions · invalidation conditions · forecast-method version.
+
+Market price should be withheld during the first probability-estimation pass when configured, to
+reduce anchoring (`docs/02-ARCHITECTURE.md` §7). Whether it was withheld is recorded on the
+forecast and surfaced in reports (`docs/18-DECISION-REPRODUCIBILITY.md`).
+
+**This layer never sees price when the anchoring control is active, and therefore never
+produces edge, EV, or a recommendation.**
+
+### Layer 2 — Forecast Calibration
+
+**Purpose:** evaluate whether estimated probabilities align with realized outcomes over time.
+
+Inputs: immutable forecast · verified settlement outcome.
+
+Outputs: Brier score · probability bucket · calibration error · category-level performance ·
+model and prompt attribution.
+
+**Forecast calibration does not evaluate whether a market trade was profitable.** It requires
+only the forecast and the outcome — no price, no edge, no EV. See `docs/09-CALIBRATION.md`.
+
+### Layer 3 — Economic Scoring
+
+**Purpose:** determine whether the difference between estimated probability and available market
+price represents a potentially favorable economic opportunity.
+
+Inputs: estimated probability · current market snapshot · executable-side price · spread ·
+liquidity · applicable fees · time to expiration · configured uncertainty penalty.
+
+Outputs: market-implied probability · raw edge · adjusted edge · expected value · economic-risk
+flags · scoring-policy version.
+
+**Economic scoring is bound to a specific market snapshot.** The same forecast scored against a
+different snapshot is a different economic score, not an update to the existing one.
+
+### Layer 4 — Recommendation Policy
+
+**Purpose:** translate forecast quality and economic scoring into a human-reviewable label.
+
+Inputs: forecast probability · forecast confidence · evidence grade · expected value · adjusted
+edge · liquidity flags · settlement ambiguity · recommendation-policy version.
+
+Outputs: `buy_candidate` · `watch` · `pass` · `avoid` · recommendation rationale · human-review
+requirements.
+
+**A recommendation is not a trade instruction** (`adr/0008-mie-domain-boundary.md`).
+
+### Prohibited
+
+- Combining the layers into a single opaque "master score."
+- Deriving calibration from realized profit or simulated P&L.
+- Producing an economic score that does not reference a timestamped market snapshot.
+- Versioning recommendation thresholds together with probability methodology — they change for
+  different reasons and must be independently attributable.
+
+### Versioning
+
+Each layer carries its own version identifier, changed independently:
+
+| Layer | Version identifier |
+|---|---|
+| 1 — Probability estimation | `forecast_method_version` |
+| 2 — Forecast calibration | `calibration_method_version` |
+| 3 — Economic scoring | `scoring_policy_version` |
+| 4 — Recommendation policy | `recommendation_policy_version` |
+
 ## Market Probability
 
 For a YES contract priced in dollars:
@@ -140,6 +249,12 @@ Deferred from MVP:
 Formula or threshold changes require:
 
 - ADR.
-- Version bump.
+- Version bump — of the **affected layer only** (see Scoring-Layer Separation).
 - Backtest or replay when possible.
 - Calibration impact note.
+- Lifecycle promotion through `docs/19-PROMOTION-AND-RETIREMENT-POLICY.md`. A threshold change
+  is a decision-producing component change and may not go straight to production.
+
+Recommendation-threshold changes are singled out for care: loosening a threshold raises
+candidate volume immediately and degrades precision slowly, so volume is a guardrail metric,
+never a success metric.

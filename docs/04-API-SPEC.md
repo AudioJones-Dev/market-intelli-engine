@@ -14,36 +14,78 @@
 
 ## Provider Interfaces
 
+The interfaces below are the shipped contracts in `services/providers/`, re-exported from the
+`services/providers/index.ts` barrel.
+
+Two conventions hold across all four:
+
+- Every interface exposes `readonly name: string` and `health(): Promise<ProviderHealth>`.
+- Every payload result type (`MarketContract`, `ResearchResult`, `ModelResult`, `DeliveryResult`)
+  carries a `provider` field and a `raw` escape hatch preserving the untouched upstream payload,
+  so any recommendation can be reproduced from stored data. `raw` is `unknown` and required
+  everywhere except `DeliveryResult`, where it is optional.
+
+Shared types live in `services/providers/types.ts`: `ProviderKind`, `ProviderHealthStatus`,
+`ProviderHealth`, `ProviderErrorContext`, and `class ProviderError extends Error`.
+
 ### Market Provider
+
+Source: `services/providers/market.ts`
 
 ```ts
 interface MarketProvider {
-  listMarkets(params: MarketQueryParams): Promise<Market[]>;
-  getMarket(ticker: string): Promise<Market>;
+  readonly name: string;
+  health(): Promise<ProviderHealth>;
+  listMarkets(params: MarketQueryParams): Promise<MarketListResult>;
+  getMarket(ticker: string): Promise<MarketContract>;
+}
+
+interface MarketListResult {
+  markets: MarketContract[];
+  nextCursor?: string;
 }
 ```
 
+`MarketContract` is the normalized market entity; `MarketQueryParams` accepts optional `status`,
+`category`, `limit`, and `cursor`.
+
 ### Research Provider
+
+Source: `services/providers/research.ts`
 
 ```ts
 interface ResearchProvider {
+  readonly name: string;
+  health(): Promise<ProviderHealth>;
   researchMarket(input: ResearchRequest): Promise<ResearchResult>;
 }
 ```
 
 ### Model Provider
 
+Source: `services/providers/model.ts`
+
 ```ts
 interface ModelProvider {
-  generateStructuredOutput<T>(input: ModelRequest): Promise<T>;
+  readonly name: string;
+  health(): Promise<ProviderHealth>;
+  runStructured<TInput, TOutput>(request: ModelRequest<TInput>): Promise<ModelResult<TOutput>>;
 }
 ```
 
+`ModelRequest<TInput>` carries `promptId`, `promptVersion`, `modelName`, `temperature`, a
+`responseFormat` JSON schema, and the typed `input`. `ModelResult<TOutput>` echoes the prompt and
+model identifiers alongside the typed `output` and the `raw` response.
+
 ### Delivery Provider
+
+Source: `services/providers/delivery.ts`
 
 ```ts
 interface DeliveryProvider {
-  deliverReport(report: Report): Promise<DeliveryResult>;
+  readonly name: string;
+  health(): Promise<ProviderHealth>;
+  deliverReport(report: ReportPayload): Promise<DeliveryResult>;
 }
 ```
 
@@ -79,6 +121,16 @@ Required normalized fields:
 - open_interest
 - raw_json
 
+Implementation status (`services/providers/kalshi.ts`):
+
+- Implemented: `health()`, `listMarkets()`, `getMarket()`. Read-only, unauthenticated — no
+  order, portfolio, or trading endpoints are called.
+- `MarketQueryParams.status`, `limit`, and `cursor` are mapped to query parameters.
+  `MarketQueryParams.category` is accepted by the interface but is **not** sent to the Kalshi
+  API; the returned `category` is inferred locally from the event ticker prefix. Category
+  filtering is therefore not yet available at the provider level.
+- Settlement/outcome lookup is not implemented.
+
 Failure modes:
 
 - API unavailable.
@@ -89,8 +141,15 @@ Failure modes:
 
 Retry policy:
 
-- Retry transient 429/5xx responses with exponential backoff.
-- Do not retry deterministic 4xx configuration errors.
+- **Not implemented.** There is no backoff and no retry loop anywhere in the codebase; a failed
+  call surfaces to the caller immediately.
+- What exists today is retryability *classification*. Every failure is raised as a
+  `ProviderError` whose `ProviderErrorContext` carries `retryable: boolean` plus `statusCode`
+  where known: `true` for network-level failures and for HTTP 429/5xx, `false` for deterministic
+  4xx responses and malformed payloads.
+- When retry orchestration is built, it must honour that flag — retry transient 429/5xx with
+  exponential backoff, and never retry deterministic 4xx configuration errors. Until then this
+  is an intent, not a behaviour.
 
 ## Perplexity Provider
 

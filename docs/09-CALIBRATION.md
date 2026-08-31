@@ -9,6 +9,60 @@ Calibration determines whether MIE's probability estimates match observed outcom
 
 The system should improve because forecasts are measured, not because outputs sound confident.
 
+## Calibration Is Not Profitability
+
+Calibration is **Layer 2** in `docs/08-SCORING.md`. It evaluates the forecast against the
+outcome, and nothing else.
+
+- Calibration requires only an immutable forecast and a verified settlement outcome. It requires
+  **no price, no edge, no expected value, and no simulated position.**
+- A well-calibrated forecast can identify an unattractive trade. A profitable trade can follow
+  from a poorly calibrated forecast and luck. Scoring them together makes neither measurable.
+- **Recommendation policy is evaluated separately** from probability calibration. "Were the
+  probabilities right?" and "were the `buy_candidate` labels well chosen?" are different
+  questions with different remedies — the first points at the probability method, the second at
+  thresholds.
+
+`realized_ev` in `calibration_scores` (`docs/03-DATA-MODEL.md`) is therefore an economic
+diagnostic, not a calibration metric. It must never enter the Brier score, the bucket
+assignment, or any promotion decision about a probability method.
+
+## Calibration by Signal Class
+
+MIOS-derived signal classes are adopted as **hypotheses under measurement**, not as validated
+edges (`adr/0009-mios-adoption-scope.md`). MIOS declares its own architecture untested and its
+social-arbitrage evidence a single-practitioner case study.
+
+Each forecast therefore records the **signal class** that generated it — for example
+search/social trend, filing-derived, regulatory-calendar, base-rate-only. Calibration reports
+Brier scores **per signal class**, not pooled.
+
+Pooling would hide exactly the finding that matters: whether a given class of evidence carries
+predictive value in Kalshi markets at all. Per-class reporting is subject to the same minimum
+sample-size rule as probability buckets — a class below the threshold is marked
+`LOW n — not interpretable` and excluded from any claim.
+
+This makes MIE the measuring instrument for MIOS's untested claims rather than a system that
+assumes them.
+
+## Attribution
+
+Every calibration record must be attributable to the components that produced the forecast:
+
+- prompt ID and version;
+- agent ID and version;
+- model provider and identifier;
+- forecast-method version;
+- evidence-normalization policy version.
+
+Without attribution, calibration is descriptive — it says the system's forecasts drifted, but
+not which change caused the drift, and so cannot support the promotion decisions in
+`docs/19-PROMOTION-AND-RETIREMENT-POLICY.md`.
+
+Historical calibration scores remain connected to their original decision manifests
+(`docs/18-DECISION-REPRODUCIBILITY.md`) and are **never re-scored under a later policy**.
+Retroactive re-scoring destroys the only evidence that the system is improving.
+
 ## Core Metrics
 
 ### Brier Score

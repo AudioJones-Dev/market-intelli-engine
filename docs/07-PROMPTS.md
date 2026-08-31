@@ -66,6 +66,13 @@ Constraints:
 - Include contradictory evidence.
 - Mark missing evidence.
 - Do not produce a recommendation.
+- Record an evidence **tier** per item (`docs/20-MIOS-METHODOLOGY.md` §4.1). MIE operates from
+  Tier 2 onward; Tier 1 personal observation is unavailable to a batch system.
+- Search- and social-trend evidence must be **seasonally adjusted** (multi-year view) or
+  explicitly labelled unadjusted. An unadjusted trend spike is not evidence of change.
+- Tier 3/4 saturation (mainstream media, analyst coverage) is recorded as an observation about
+  **information diffusion**, not as support for the outcome. It feeds the economic-risk flags in
+  Layer 3, never the probability estimate (`docs/20-MIOS-METHODOLOGY.md` §4.2).
 
 ### MIE-PROBABILITY-ESTIMATE-v0.1.0
 
@@ -99,9 +106,57 @@ Constraints:
 - Do not use market price unless explicitly provided in input.
 - Do not imply certainty.
 
+### MIE-ACH-MATRIX-v0.1.0
+
+Purpose: enumerate competing resolution hypotheses and score the evidence against them.
+Procedure is defined in `docs/21-ACH-PROCEDURE.md`.
+
+Inputs:
+
+- Market question.
+- Settlement rules.
+- Normalized evidence dossier with per-item IDs, quality scores, and status.
+
+Output schema:
+
+```json
+{
+  "hypotheses": [
+    {
+      "id": "H1",
+      "statement": "string",
+      "settles": "YES|NO|AMBIGUOUS"
+    }
+  ],
+  "cells": [
+    {
+      "evidence_id": "E1",
+      "hypothesis_id": "H1",
+      "score": 2,
+      "rationale": "string"
+    }
+  ],
+  "excluded_evidence": [{ "evidence_id": "string", "reason": "string" }],
+  "ach_procedure_version": "v1"
+}
+```
+
+Constraints:
+
+- Minimum 3, maximum 7 hypotheses; each a distinct causal path, not a bare outcome.
+- Include a settlement-ambiguity hypothesis wherever resolution criteria are contestable.
+- **Enumerate hypotheses before seeing any probability estimate.** Do not designate a preferred
+  hypothesis.
+- Cell scores are integers in `[-2, 2]`; every non-zero cell carries a rationale citing the
+  evidence item.
+- Do not omit a hypothesis for seeming unlikely. Do not pad the set to reach three — return
+  insufficient instead.
+- Do not compute a probability. Diagnosticity, inconsistency, coverage, and sensitivity are
+  computed deterministically outside the model.
+
 ### MIE-COUNTERARGUMENT-v0.1.0
 
-Purpose: produce the strongest opposing case.
+Purpose: produce the strongest opposing case, informed by the ACH matrix.
 
 Output schema:
 

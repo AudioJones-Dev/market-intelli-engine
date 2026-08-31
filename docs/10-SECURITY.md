@@ -11,6 +11,43 @@
 4. Store enough audit data to reproduce recommendations.
 5. Do not log sensitive credentials.
 6. Human approval is required for production deployment and secrets changes.
+7. MIE holds no execution authority and no brokerage credentials.
+
+## Execution Boundary
+
+Per [`adr/0008-mie-domain-boundary.md`](../adr/0008-mie-domain-boundary.md):
+
+- **MIE stores no brokerage credentials.** Not live, not paper, not read-only account access.
+- **MIE has no order-execution authority.** No live orders, no paper orders, no order-routing
+  dependency.
+- **No agent may initiate a capital-allocation action** (`docs/06-AGENTS.md`).
+- MIE holds no account balances, position quantities, or portfolio state.
+
+Any future execution capability requires an **independent threat model**, separate credentials, a
+separate deployment approval, and its own ADR. It may not inherit MIE's service identity,
+secrets, or database role.
+
+### Credential tripwires
+
+Treat any of the following as a boundary violation requiring review before merge:
+
+- a secret, environment variable, or config key naming a broker, exchange account, or trading
+  API;
+- a dependency on a brokerage or order-routing SDK;
+- a schema field representing contract quantity, capital allocated, account balance, or open
+  position.
+
+`KALSHI_API_KEY` (listed below as optional/future) is scoped to **read-only market data**.
+Provisioning it with trading permissions would breach this boundary regardless of how it is used
+in code.
+
+### Component authorization
+
+Unapproved components cannot access production decision workflows. Only components in the
+`approved` lifecycle state may influence official outputs
+(`docs/19-PROMOTION-AND-RETIREMENT-POLICY.md`); `experimental`, `reviewed`, `suspended`, and
+`retired` components fail closed. This is an authorization control, not merely a quality gate —
+it bounds which code paths can produce operator-facing conclusions.
 
 ## Secret Management
 
@@ -99,3 +136,7 @@ If a secret is exposed:
 - Service role key is not exposed client-side.
 - Logs redact secrets.
 - No trading credentials are required.
+- No brokerage credential exists in any environment, secret store, or example file.
+- No dependency provides order submission or brokerage connectivity.
+- No schema field represents contract quantity, capital, balance, or open position.
+- Only `approved` components execute in production workflows.
