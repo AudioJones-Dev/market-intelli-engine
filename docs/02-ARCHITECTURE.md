@@ -82,10 +82,25 @@ Defines the contract for market ingestion.
 
 ```ts
 interface MarketProvider {
-  listMarkets(params: MarketQueryParams): Promise<Market[]>;
-  getMarket(ticker: string): Promise<Market>;
+  readonly name: string;
+  health(): Promise<ProviderHealth>;
+  listMarkets(params: MarketQueryParams): Promise<MarketListResult>;
+  getMarket(ticker: string): Promise<MarketContract>;
 }
 ```
+
+`listMarkets` returns a paging envelope, not a bare array:
+
+```ts
+interface MarketListResult {
+  markets: MarketContract[];
+  nextCursor?: string;
+}
+```
+
+`MarketContract` is the normalized market entity. It carries a `provider` field and a
+`raw: unknown` escape hatch holding the untouched upstream payload, which is what makes the
+snapshot store reproducible. See `services/providers/market.ts` for the full shape.
 
 MVP implementation:
 
@@ -122,6 +137,8 @@ Output:
 
 ```ts
 interface ResearchProvider {
+  readonly name: string;
+  health(): Promise<ProviderHealth>;
   researchMarket(input: ResearchRequest): Promise<ResearchResult>;
 }
 ```
