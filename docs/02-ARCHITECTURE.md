@@ -12,6 +12,39 @@ Build a simple, auditable batch-processing platform that turns market data into 
 
 The MVP uses scheduled batch workflows. No websocket streaming, frontend, distributed agent mesh, autonomous trading, or portfolio optimizer is required.
 
+## Domain Boundary
+
+MIE is a research, forecasting, expected-value analysis, and calibration platform. It is **not**
+a brokerage, portfolio manager, or execution system. This boundary is architectural, not merely
+scope, and is defined in [`adr/0008-mie-domain-boundary.md`](../adr/0008-mie-domain-boundary.md).
+
+MIE **may not own**: brokerage authentication or credentials · live or paper order submission ·
+portfolio allocation · position sizing · margin calculations · trade reconciliation · intraday
+position management · autonomous capital deployment · stop-loss execution · account-level risk
+enforcement.
+
+MIE computes expected value per contract. **EV is analysis; sizing is execution.** The boundary
+is crossed when a quantity of contracts, an allocation fraction, an account balance, or an open
+position enters the model.
+
+Recommendations are produced for human review. **A recommendation is not an execution
+instruction.**
+
+## Analytical Layer Separation
+
+Scoring is separated into four independently versioned layers (`docs/08-SCORING.md`):
+
+```text
+Layer 1  Probability estimation   → forecast record        (no price required)
+Layer 2  Forecast calibration     → calibration record     (forecast + outcome only)
+Layer 3  Economic scoring         → economic score         (bound to a market snapshot)
+Layer 4  Recommendation policy    → recommendation record
+```
+
+A good forecast can identify a bad trade; a profitable trade can follow from a poor forecast and
+luck. Combining these into one score makes both unmeasurable. No opaque "master score" may
+replace the layers.
+
 ## High-Level Flow
 
 ```text
@@ -49,10 +82,25 @@ Defines the contract for market ingestion.
 
 ```ts
 interface MarketProvider {
-  listMarkets(params: MarketQueryParams): Promise<Market[]>;
-  getMarket(ticker: string): Promise<Market>;
+  readonly name: string;
+  health(): Promise<ProviderHealth>;
+  listMarkets(params: MarketQueryParams): Promise<MarketListResult>;
+  getMarket(ticker: string): Promise<MarketContract>;
 }
 ```
+
+`listMarkets` returns a paging envelope, not a bare array:
+
+```ts
+interface MarketListResult {
+  markets: MarketContract[];
+  nextCursor?: string;
+}
+```
+
+`MarketContract` is the normalized market entity. It carries a `provider` field and a
+`raw: unknown` escape hatch holding the untouched upstream payload, which is what makes the
+snapshot store reproducible. See `services/providers/market.ts` for the full shape.
 
 MVP implementation:
 
@@ -89,6 +137,8 @@ Output:
 
 ```ts
 interface ResearchProvider {
+  readonly name: string;
+  health(): Promise<ProviderHealth>;
   researchMarket(input: ResearchRequest): Promise<ResearchResult>;
 }
 ```
@@ -149,7 +199,30 @@ Stores reasoning summaries, counterarguments, and post-settlement retrospectives
 
 ### 12. Calibration Engine
 
-Scores settled forecasts using Brier score, calibration buckets, and realized EV where applicable.
+Scores settled forecasts using Brier score and calibration buckets. Calibration uses the
+forecast and the outcome only — realized EV is an economic diagnostic recorded alongside it, and
+never an input to the Brier score or bucket assignment (`docs/09-CALIBRATION.md`).
+
+### 13. Decision Manifest Builder
+
+Assembles the immutable record binding every input behind a recommendation: market snapshot,
+evidence dossier, source provenance, agent executions, settlement-rules hash, and the version of
+each analytical layer. Required for every recommendation
+(`docs/18-DECISION-REPRODUCIBILITY.md`).
+
+### 14. Component Registry and Promotion Gate
+
+Holds the lifecycle state of every decision-producing component — prompt, agent, model config,
+ranking rule, scoring formula, threshold, provider
+(`docs/19-PROMOTION-AND-RETIREMENT-POLICY.md`).
+
+Enforcement responsibilities:
+
+- Only `approved` components may influence official outputs.
+- `experimental` and `shadow` components write to separate storage and never reach a report.
+- `suspended` components **fail closed** — no recommendation is produced. Producing nothing is
+  always acceptable; producing an ungoverned recommendation is not.
+- Agents may propose changes; only a recorded human approval promotes one.
 
 ## Repository Structure
 
@@ -218,10 +291,14 @@ An ADR is required for:
 - Adding market providers.
 - Adding research providers.
 - Changing database schema after baseline migration.
-- Adding trade execution.
+- Adding trade execution, brokerage integration, position sizing, or portfolio state
+  (`adr/0008-mie-domain-boundary.md`).
 - Adding frontend/user accounts.
 - Changing scoring formulas.
 - Changing recommendation thresholds.
 - Introducing new infrastructure.
 - Adopting a design-system resnapshot or an upstream design change.
 - Adding a shared design-system package or HTML/PDF report rendering.
+- Extracting any shared contract into a package (`docs/17-SHARED-CONTRACT-CANDIDATES.md`).
+- Introducing a new decision-producing model or provider.
+- Changing a security boundary.

@@ -38,6 +38,29 @@ MVP metrics:
 | provider_error_count | Track external failures |
 | calibration_scored_count | Verify outcome scoring |
 
+### Governance and Reproducibility Metrics
+
+| Metric | Purpose |
+|---|---|
+| active_component_versions | Which version of each decision component is live |
+| shadow_run_count | Shadow evaluation volume |
+| approved_run_count | Official run volume, for shadow-vs-approved comparison |
+| shadow_approved_divergence_rate | How often shadow disagrees with approved — the core promotion signal |
+| schema_validation_failure_count | Schema failures by component; a suspension trigger |
+| evidence_quality_failure_count | Evidence-quality collapse; a suspension trigger |
+| recommendation_volume | Drift detector — a threshold change shows here first |
+| recommendation_volume_drift | Deviation from expected bounds; a suspension trigger |
+| manifest_completeness_rate | Share of recommendations with a complete decision manifest |
+| unresolved_version_reference_count | Manifests containing `latest`/`current`/`production` — must be zero |
+| suspended_component_events | Suspensions, with reason |
+| promotion_events | Promotions, with approver |
+| rollback_events | Rollbacks, with target version |
+| failed_closed_count | Stages that produced no output due to gating |
+
+`manifest_completeness_rate` and `unresolved_version_reference_count` are the two metrics that
+make reproducibility falsifiable rather than aspirational. A manifest that exists but references
+a moving pointer satisfies the first and fails the second, which is why both are tracked.
+
 ## Health Checks
 
 Minimum checks:
@@ -58,6 +81,10 @@ MVP alert conditions:
 - External provider errors exceed threshold.
 - No market snapshots created in 24 hours.
 - Settlement workflow fails repeatedly.
+- A recommendation is produced without a complete decision manifest.
+- An unapproved or unversioned component is invoked in a production workflow.
+- A component enters `suspended`.
+- Recommendation volume exits expected bounds.
 
 ## Error Taxonomy
 
@@ -69,6 +96,10 @@ MVP alert conditions:
 - `model_output_invalid`
 - `database_write_failed`
 - `report_generation_failed`
+- `manifest_incomplete`
+- `unversioned_component`
+- `component_suspended`
+- `unapproved_component_invoked`
 
 ## Runbooks
 

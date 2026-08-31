@@ -1,6 +1,7 @@
 # Prompt Registry
 
-This directory stores versioned prompt contracts and prompt text for MIE.
+This directory will store versioned prompt contracts and prompt text for MIE. It is currently
+empty; the prompt registry lands at Milestone 13.
 
 Rules:
 

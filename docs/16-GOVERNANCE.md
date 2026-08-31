@@ -164,6 +164,43 @@ Human approval is required for:
 - Design-system resnapshot or adoption of an upstream design change.
 - Any change to MIE semantic color mapping or report structure.
 - Any frontend work (see the frontend ADR gate in `docs/14-ADR.md`).
+- Promotion of any decision-producing component between lifecycle states
+  (`docs/19-PROMOTION-AND-RETIREMENT-POLICY.md`).
+- Activation of a new model or model configuration.
+- Extraction of any shared contract into a package
+  (`docs/17-SHARED-CONTRACT-CANDIDATES.md`).
+- Any capability approaching the domain boundary
+  (`adr/0008-mie-domain-boundary.md`).
+
+## Domain, Reproducibility, and Promotion Governance
+
+Three further governance regimes bind alongside the gates above:
+
+**Domain boundary** (`adr/0008-mie-domain-boundary.md`). MIE is research, forecasting,
+expected-value analysis, and calibration. It holds no brokerage credentials, no execution
+authority, and no portfolio state. Capabilities on the far side of that boundary are not
+deferred roadmap items — they belong to a separate bounded system.
+
+**Decision reproducibility** (`docs/18-DECISION-REPRODUCIBILITY.md`). Every recommendation
+carries a decision manifest referencing immutable or content-addressed inputs. No material input
+may be referenced by `latest`, `current`, or `production`. Historical manifests are never updated
+— new information creates a new record.
+
+**Promotion lifecycle** (`docs/19-PROMOTION-AND-RETIREMENT-POLICY.md`). Every decision-producing
+component holds a lifecycle state. Only `approved` components influence official outputs.
+Suspended components fail closed. **No agent may promote its own proposed change, and no single
+favorable outcome is sufficient evidence for promotion** — a correct call on a `0.62` forecast is
+one sample, not evidence of improvement.
+
+### Definition of Done additions
+
+A decision-producing change is not DONE until:
+
+- it carries an explicit version identifier (never `latest`);
+- it holds a lifecycle state with a recorded rollback target;
+- recommendations it produces emit a complete decision manifest;
+- the analytical layer it affects is versioned independently of the other three;
+- its promotion is recorded with a human approver.
 
 ## Engineering Decision Hierarchy
 

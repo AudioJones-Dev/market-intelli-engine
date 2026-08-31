@@ -8,4 +8,5 @@ MVP workflow order:
 2. Settlement workflow.
 3. Weekly calibration workflow.
 
-No executable workflow is added in Milestone 01/02.
+This directory currently contains no executable workflow. Workflow definitions arrive with the
+ingestion workflow milestone (`docs/15-CODEX-BUILD-PLAN.md`).

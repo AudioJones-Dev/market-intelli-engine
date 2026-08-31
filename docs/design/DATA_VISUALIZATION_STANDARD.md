@@ -316,11 +316,11 @@ Additional requirements:
 Analysis of Competing Hypotheses — hypotheses as columns, evidence items as rows, cells
 recording each item's consistency with each hypothesis.
 
-> **Methodology gap.** The MIOS methodology that defines MIE's ACH procedure is **not present
-> in this repository** and was not supplied. This section specifies _presentation only_. The
-> analytical procedure — how hypotheses are enumerated, how consistency is scored, how
-> diagnosticity is computed — must be specified before ACH output is generated. Flagged as
-> decision D-6 in `DESIGN_SYSTEM_SNAPSHOT.md` §7.
+> **Procedure now specified — D-6 closed.** The analytical procedure is defined in
+> [`docs/21-ACH-PROCEDURE.md`](../21-ACH-PROCEDURE.md): hypothesis enumeration, consistency
+> scoring, diagnosticity, weighted inconsistency, coverage, and sensitivity analysis. Adoption
+> scope and exclusions are recorded in [`docs/20-MIOS-METHODOLOGY.md`](../20-MIOS-METHODOLOGY.md).
+> This section remains the **presentation** contract; the two documents must stay consistent.
 
 Presentation rules:
 
@@ -333,6 +333,13 @@ Presentation rules:
   hypothesis defeats the method.
 - ACH is scored by **disconfirmation**: the informative signal is inconsistency. Evidence rows
   with the highest diagnosticity sort to the top, and diagnosticity is shown as a mono numeral.
+- Non-diagnostic rows (diagnosticity `0`) are **retained and marked**, never hidden. How much of
+  the evidence base was inert is itself a finding.
+- Each hypothesis column shows its **coverage count**; a `LOW COVERAGE` hypothesis carries that
+  label as text, because a hypothesis leading by absence of evidence must not read the same as
+  one leading by weight of it.
+- **Critical evidence** (items whose removal flips the ranking) is marked in the row, with its
+  verification status adjacent.
 - Evidence rows carry their status treatment from `MIE_DESIGN_ADAPTATION.md` §6, and their
   source reference.
 - Rows are never colored by whether they support the leading hypothesis.
