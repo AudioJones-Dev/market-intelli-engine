@@ -29,22 +29,22 @@ export function toMarketSnapshotRecord(
   market: MarketContract,
   ingestedAt: string = new Date().toISOString()
 ): MarketSnapshotRecord {
-  return omitUndefined({
+  return {
     provider: market.provider,
     ticker: market.ticker,
-    event_ticker: market.eventTicker,
+    ...(market.eventTicker !== undefined && { event_ticker: market.eventTicker }),
     title: market.title,
-    category: market.category,
+    ...(market.category !== undefined && { category: market.category }),
     status: market.status,
-    close_time: market.closeTime,
-    yes_bid: market.yesBid,
-    yes_ask: market.yesAsk,
-    last_price: market.lastPrice,
-    volume: market.volume,
-    open_interest: market.openInterest,
+    ...(market.closeTime !== undefined && { close_time: market.closeTime }),
+    ...(market.yesBid !== undefined && { yes_bid: market.yesBid }),
+    ...(market.yesAsk !== undefined && { yes_ask: market.yesAsk }),
+    ...(market.lastPrice !== undefined && { last_price: market.lastPrice }),
+    ...(market.volume !== undefined && { volume: market.volume }),
+    ...(market.openInterest !== undefined && { open_interest: market.openInterest }),
     raw_json: market.raw,
     ingested_at: ingestedAt
-  });
+  };
 }
 
 export function toMarketSnapshotRecords(
@@ -52,8 +52,4 @@ export function toMarketSnapshotRecords(
   ingestedAt: string = new Date().toISOString()
 ): MarketSnapshotRecord[] {
   return markets.map((market) => toMarketSnapshotRecord(market, ingestedAt));
-}
-
-function omitUndefined<T extends Record<string, unknown>>(input: T): T {
-  return Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)) as T;
 }
